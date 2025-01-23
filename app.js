@@ -13,7 +13,7 @@ const port = process.env.API_PORT || 3306;
 const mysql = require('mysql2/promise');
 
 const poolConfig = {
-    uri: process.env.MYSQL_URI,
+    uri: process.env.MYSQL_URI || 'mysql://root:izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL@autorack.proxy.rlwy.net:28506/railway',
     ssl: {
       rejectUnauthorized: false
     }
