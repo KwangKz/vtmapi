@@ -1,15 +1,15 @@
-// const mysql = require('mysql2/promise');
+const mysql = require('mysql2/promise');
 
-// const poolConfig = {
-//     uri: process.env.MYSQL_URI,
-//     ssl: {
-//       rejectUnauthorized: false
-//     }
-//   };
+const poolConfig = {
+    uri: process.env.MYSQL_URI,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
   
-//   const pool = mysql.createPool(poolConfig);
+  const pool = mysql.createPool(poolConfig);
 
-const { pool } = require('../db/db');
+// const { pool } = require('../db/db');
 
 exports.getbanner = (req, res) => {
   pool.execute('SELECT * FROM tbl_banner', (err, result) => {
