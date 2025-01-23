@@ -1,17 +1,10 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const pool = mysql.createPool({
-    host: "autorack.proxy.rlwy.net",
-    user: "root",
-    password: "izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL",
-    database: "railway",
+const poolConfig = {
+    uri: process.env.MYSQL_URI,
     ssl: {
-        rejectUnauthorized: false,
-    },
-    waitForConnections: true,  // Wait for a connection to be available
-    connectionLimit: 10,      // Max number of concurrent connections
-    queueLimit: 0,
-    connectTimeout: 30000          // No limit for connection requests
-});
-
-module.exports = pool.promise();
+      rejectUnauthorized: false
+    }
+  };
+  
+exports.pool = mysql.createPool(poolConfig);

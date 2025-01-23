@@ -1,7 +1,16 @@
-const Con = require('../db/db');
+const mysql = require('mysql2/promise');
+
+const poolConfig = {
+    uri: process.env.MYSQL_URI,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
+  
+  const pool = mysql.createPool(poolConfig);
 
 exports.getbanner = (req, res) => {
-    Con.execute('SELECT * FROM tbl_banner', (err, result) => {
+  pool.execute('SELECT * FROM tbl_banner', (err, result) => {
       if (err) {
         return res.json({ status: "error", message: "Error: " + err.message });
       }
@@ -9,7 +18,6 @@ exports.getbanner = (req, res) => {
         return res.json({ status: "error", message: "No banners found" });
       }
       res.json(result);
-      Con.end();
     });
   };
   

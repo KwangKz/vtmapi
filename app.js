@@ -8,34 +8,17 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secret = "VTMSCT";
 
-// const pool = require('./db/db'); // Assuming you are exporting a pool from db.js
-const port = 3306;
+const port = process.env.API_PORT;
 const mysql = require('mysql2/promise');
 
-// const pool = mysql.createConnection('mysql://root:izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL@autorack.proxy.rlwy.net:28506/railway')
-
 const poolConfig = {
-    uri: 'mysql://root:izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL@autorack.proxy.rlwy.net:28506/railway',
+    uri: process.env.MYSQL_URI,
     ssl: {
       rejectUnauthorized: false
     }
   };
   
   const pool = mysql.createPool(poolConfig);
-
-// const pool = mysql.createPool({
-//     host: "autorack.proxy.rlwy.net",
-//     user: "root",
-//     password: "izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL",
-//     database: "railway",
-//     ssl: {
-//         rejectUnauthorized: false,
-//     },
-//     waitForConnections: true,  // Wait for a connection to be available
-//     connectionLimit: 10,      // Max number of concurrent connections
-//     queueLimit: 0,
-//     connectTimeout: 30000          // No limit for connection requests
-// });
 
 
 

@@ -1,4 +1,13 @@
-const Con = require('../db/db');
+const mysql = require('mysql2/promise');
+
+const poolConfig = {
+    uri: process.env.MYSQL_URI,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
+  
+ const pool = mysql.createPool(poolConfig);
 
 const bcrypt = require('bcrypt')
 const cryptnum = 10
@@ -6,16 +15,15 @@ const jwt = require('jsonwebtoken')
 const secret = "VTMSCT"
 
 exports.list = async (req, res) => {
-    Con.execute('SELECT * FROM tbl_users', (err, result) => {
+    pool.execute('SELECT * FROM tbl_users', (err, result) => {
         if (err) { res.json({ status: "error", message: err }); return }
         res.json(result);
 
-        Con.end();
     })    
 }
 
 exports.create = async (req, res) => {
-    Con.execute('SELECT * FROM tbl_users WHERE email=?',
+    pool.execute('SELECT * FROM tbl_users WHERE email=?',
         [req.body.email], (err, result) => {
             if (err) { res.json({ status: "error", message: err }); return }
             if (result.length > 0) { res.json({ status: "error", message: "This email already have used!" }); return }
@@ -26,8 +34,6 @@ exports.create = async (req, res) => {
                         if (err) { res.json({ status: "error", message: err }); return }
                         res.json({ status: "success" })
 
-                        Con.end();
-
                     }
                 )
             })
@@ -37,7 +43,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    Con.execute('SELECT * FROM tbl_users WHERE email=?',
+    pool.execute('SELECT * FROM tbl_users WHERE email=?',
         [req.body.email], (err, result, field) => {
             
             if (err) { res.json({ status: "error", message: err }); return }
@@ -53,14 +59,12 @@ exports.update = async (req, res) => {
                 res.json({ status: "error", message: "Change not detected!" }); return
             }
 
-            Con.execute('UPDATE tbl_users SET fname=?, lname=?, tel=?, urole=? WHERE email=?',
+            pool.execute('UPDATE tbl_users SET fname=?, lname=?, tel=?, urole=? WHERE email=?',
                 [req.body.fname, req.body.lname, req.body.tel, req.body.urole, req.body.email], (err, result) => {
 
                     if (err) { res.json({ status: "error", message: err }); return}
 
                     res.json({ status: "success", message: "User edit Successfully" });
-
-                    Con.end();
 
                 }
             )
@@ -69,16 +73,14 @@ exports.update = async (req, res) => {
 }
 
 exports.remove = async (req, res) => {
-    Con.execute('SELECT * FROM tbl_users WHERE email=?',
+    pool.execute('SELECT * FROM tbl_users WHERE email=?',
         [req.body.email], (err, result, field) => {
             if (err) { res.json({ status: "error", message: "Not Found This Users!!" }); return }
-            Con.execute('DELETE FROM tbl_users WHERE email=?',
+            pool.execute('DELETE FROM tbl_users WHERE email=?',
                 [req.body.email], (err, result, field) => {
                     if (err) { res.json({ status: "error", message: "Not Found This Users" }); return }
 
                     res.json({ status: "success", message: "Delete Successfully!" });
-                
-                    Con.end();
 
                 }
             )
