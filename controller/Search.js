@@ -1,13 +1,15 @@
-const mysql = require('mysql2/promise');
+// const mysql = require('mysql2/promise');
 
-const poolConfig = {
-    uri: process.env.MYSQL_URI,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  };
+// const poolConfig = {
+//     uri: process.env.MYSQL_URI,
+//     ssl: {
+//       rejectUnauthorized: false
+//     }
+//   };
   
- const pool = mysql.createPool(poolConfig);
+//  const pool = mysql.createPool(poolConfig);
+
+const { pool } = require('../db/db');
 
 const handleQuery = (req, res, tbl, colname, query) => {
     pool.execute(`SELECT * FROM ${tbl} WHERE ${colname} LIKE ?`,
