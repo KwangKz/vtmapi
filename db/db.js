@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: process.env.MYSQL_PUBLIC_URL,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
+    host: autorack.proxy.rlwy.net,
+    user: root,
+    password: izDvvQGcSiuHuyqrkPHBGDAyivNNRcWL,
+    database: railway,
     ssl: {
         rejectUnauthorized: false,
     },
