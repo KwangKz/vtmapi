@@ -254,7 +254,7 @@ app.get('/getnews', jsonparser, async (req, res) => {
     try {
         const [result] = await pool.execute('SELECT * FROM tbl_news');
         res.json(result);
-    } catch (err) {
+    } catch (err) {f
         res.json({ status: "error", message: err });
     }
 });
