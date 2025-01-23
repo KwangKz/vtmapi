@@ -9,9 +9,11 @@
     "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.11.0"
+    "mysql2": "^3.11.0",
+    "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   }
 }
