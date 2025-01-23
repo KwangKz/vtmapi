@@ -254,7 +254,7 @@ app.get('/getnews', jsonparser, async (req, res) => {
     try {
         const [result] = await pool.execute('SELECT * FROM tbl_news');
         res.json(result);
-    } catch (err) {f
+    } catch (err) {
         res.json({ status: "error", message: err });
     }
 });
@@ -266,6 +266,71 @@ app.get('/getmenu', jsonparser, async (req, res) => {
     } catch (err) {
         res.json({ status: "error", message: err });
     }
+});
+
+app.post('/updbanner', upload.fields([{ name: 'BN_src', maxCount: 1 }, { name: 'BN_cutted', maxCount: 1 }]), (req, res) => {
+    if (!req.body.BN_id || !req.body.BN_name || !req.body.BN_alt) {
+        return res.json({ status: "error", message: "Missing required fields" });
+    }
+
+    pool.execute('SELECT * FROM tbl_banner WHERE BN_id = ?', [req.body.BN_id], (err, result) => {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.json({ status: "error", message: "Internal Server Error" });
+        }
+
+        if (result.length === 0) {
+            return res.json({ status: "error", message: "Banner not found" });
+        }
+
+        const oldBanner = result[0];
+        const oldSrcPath = oldBanner.BN_src ? oldBanner.BN_src.split('/uploads/')[1] : null;
+        const oldCuttedPath = oldBanner.BN_cutted ? oldBanner.BN_cutted.split('/uploads/')[1] : null;
+
+        let newSrcUrl = oldBanner.BN_src;
+        let newCuttedUrl = oldBanner.BN_cutted;
+
+        if (req.files && req.files.BN_src) {
+            newSrcUrl = `${req.protocol}://${req.get('host')}/uploads/${req.files.BN_src[0].filename}`;
+            if (oldSrcPath) {
+                const fullOldSrcPath = path.join(__dirname, 'uploads', oldSrcPath);
+                fs.unlink(fullOldSrcPath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete old source image: ${err}`);
+                    }
+                });
+            }
+        }
+
+        if (req.files && req.files.BN_cutted) {
+            newCuttedUrl = `${req.protocol}://${req.get('host')}/uploads/${req.files.BN_cutted[0].filename}`;
+            if (oldCuttedPath) {
+                const fullOldCuttedPath = path.join(__dirname, 'uploads', oldCuttedPath);
+                fs.unlink(fullOldCuttedPath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete old cutted image: ${err}`);
+                    }
+                });
+            }
+        }
+
+        pool.execute(
+            'UPDATE tbl_banner SET BN_name = ?, BN_src = ?, BN_alt = ?, BN_cutted = ? WHERE BN_id = ?',
+            [req.body.BN_name, newSrcUrl, req.body.BN_alt, newCuttedUrl, req.body.BN_id],
+            (err, result) => {
+                if (err) {
+                    console.error("Database Error:", err);
+                    return res.json({ status: "error", message: "Internal Server Error" });
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.json({ status: "error", message: "Banner not updated" });
+                }
+
+                res.json({ status: "success", message: "Banner updated successfully" });
+            }
+        );
+    });
 });
 
 app.listen(port, () => {
