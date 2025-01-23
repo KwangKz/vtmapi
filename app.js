@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secret = "VTMSCT";
 
-const port = process.env.API_PORT;
+const port = process.env.API_PORT || 3306;
 const mysql = require('mysql2/promise');
 
 const poolConfig = {
